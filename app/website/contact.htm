@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>1999 AOS - Contact</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+    <link rel="icon" type="image/png" href="favicon.jpg">
+    <!-- Major Browsers -->
+
+    <!--[if IE]><link rel="SHORTCUT ICON" href="favicon.ico"/><![endif]-->
+    <!-- Internet Explorer-->
+
+    <link href="styles.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+
+
+    <script type="text/javascript">
+        var fnames = new Array();
+        var ftypes = new Array();
+        fnames[1] = 'FNAME';
+        ftypes[1] = 'text';
+        fnames[2] = 'LNAME';
+        ftypes[2] = 'text';
+        fnames[3] = 'MMERGE3';
+        ftypes[3] = 'phone';
+        fnames[0] = 'EMAIL';
+        ftypes[0] = 'email';
+        fnames[4] = 'MMERGE4';
+        ftypes[4] = 'text';
+
+        try {
+
+            var jqueryLoaded = jQuery;
+
+            jqueryLoaded = true;
+
+        } catch (err) {
+
+            var jqueryLoaded = false;
+
+        }
+
+        var head = document.getElementsByTagName('head')[0];
+
+        if (!jqueryLoaded) {
+
+            var script = document.createElement('script');
+
+            script.type = 'text/javascript';
+
+            script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js';
+
+            head.appendChild(script);
+
+            if (script.readyState && script.onload !== null) {
+
+                script.onreadystatechange = function() {
+
+                    if (this.readyState == 'complete') mce_preload_check();
+
+                }
+
+            }
+
+        }
+
+        var script = document.createElement('script');
+
+        script.type = 'text/javascript';
+
+        script.src = 'http://downloads.mailchimp.com/js/jquery.form-n-validate.js';
+
+        head.appendChild(script);
+
+        var err_style = '';
+
+        try {
+
+            err_style = mc_custom_error_style;
+
+        } catch (e) {
+
+            err_style = '#mc_embed_signup input.mce_inline_error{border-color:#6B0505;} #mc_embed_signup div.mce_inline_error{margin: 0 0 1em 0; padding: 5px 10px; background-color:#6B0505; font-weight: bold; z-index: 1; color:#fff;}';
+
+        }
+
+        var head = document.getElementsByTagName('head')[0];
+
+        var style = document.createElement('style');
+
+        style.type = 'text/css';
+
+        if (style.styleSheet) {
+
+            style.styleSheet.cssText = err_style;
+
+        } else {
+
+
+
+            style.appendChild(document.createTextNode(err_style));
+
+        }
+
+        head.appendChild(style);
+
+        setTimeout('mce_preload_check();', 250);
+
+
+
+        var mce_preload_checks = 0;
+
+        function mce_preload_check() {
+
+            if (mce_preload_checks > 40) return;
+
+            mce_preload_checks++;
+
+            try {
+
+                var jqueryLoaded = jQuery;
+
+            } catch (err) {
+
+                setTimeout('mce_preload_check();', 250);
+
+                return;
+
+            }
+
+            try {
+
+                var validatorLoaded = jQuery("#fake-form").validate({});
+
+            } catch (err) {
+
+                setTimeout('mce_preload_check();', 250);
+
+                return;
+
+            }
+
+            mce_init_form();
+
+        }
+
+        function mce_init_form() {
+
+            jQuery(document).ready(function($) {
+
+                var options = {
+                    errorClass: 'mce_inline_error',
+                    errorElement: 'div',
+                    onkeyup: function() {},
+                    onfocusout: function() {},
+                    onblur: function() {}
+                };
+
+                var mce_validator = $("#mc-embedded-subscribe-form").validate(options);
+
+                $("#mc-embedded-subscribe-form").unbind('submit'); //remove the validator so we can get into beforeSubmit on the ajaxform, which then calls the validator
+
+                options = {
+                    url: 'http://1999aos.us4.list-manage.com/subscribe/post-json?u=0749154bef2ab5bde453dd75d&id=43be4f8d8f&c=?',
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+
+                    beforeSubmit: function() {
+
+                        $('#mce_tmp_error_msg').remove();
+
+                        $('.datefield', '#mc_embed_signup').each(
+
+                            function() {
+
+                                var txt = 'filled';
+
+                                var fields = new Array();
+
+                                var i = 0;
+
+                                $(':text', this).each(
+
+                                    function() {
+
+                                        fields[i] = this;
+
+                                        i++;
+
+                                    });
+
+                                $(':hidden', this).each(
+
+                                    function() {
+
+                                        var bday = false;
+
+                                        if (fields.length == 2) {
+
+                                            bday = true;
+
+                                            fields[2] = {
+                                                'value': 1970
+                                            }; //trick birthdays into having years
+
+                                        }
+
+                                        if (fields[0].value == 'MM' && fields[1].value == 'DD' && (fields[2].value == 'YYYY' || (bday && fields[2].value == 1970))) {
+
+                                            this.value = '';
+
+                                        } else if (fields[0].value == '' && fields[1].value == '' && (fields[2].value == '' || (bday && fields[2].value == 1970))) {
+
+                                            this.value = '';
+
+                                        } else {
+
+                                            this.value = fields[0].value + '/' + fields[1].value + '/' + fields[2].value;
+
+                                        }
+
+                                    });
+
+                            });
+
+                        return mce_validator.form();
+
+                    },
+
+                    success: mce_success_cb
+
+                };
+
+                $('#mc-embedded-subscribe-form').ajaxForm(options);
+
+
+
+
+
+            });
+
+        }
+
+        function mce_success_cb(resp) {
+
+            $('#mce-success-response').hide();
+
+            $('#mce-error-response').hide();
+
+            if (resp.result == "success") {
+
+                $('#mce-' + resp.result + '-response').show();
+
+                $('#mce-' + resp.result + '-response').html(resp.msg);
+
+                $('#mc-embedded-subscribe-form').each(function() {
+
+                    this.reset();
+
+                });
+
+            } else {
+
+                var index = -1;
+
+                var msg;
+
+                try {
+
+                    var parts = resp.msg.split(' - ', 2);
+
+                    if (parts[1] == undefined) {
+
+                        msg = resp.msg;
+
+                    } else {
+
+                        i = parseInt(parts[0]);
+
+                        if (i.toString() == parts[0]) {
+
+                            index = parts[0];
+
+                            msg = parts[1];
+
+                        } else {
+
+                            index = -1;
+
+                            msg = resp.msg;
+
+                        }
+
+                    }
+
+                } catch (e) {
+
+                    index = -1;
+
+                    msg = resp.msg;
+
+                }
+
+                try {
+
+                    if (index == -1) {
+
+                        $('#mce-' + resp.result + '-response').show();
+
+                        $('#mce-' + resp.result + '-response').html(msg);
+
+                    } else {
+
+                        err_id = 'mce_tmp_error_msg';
+
+                        html = '<div id="' + err_id + '" style="' + err_style + '"> ' + msg + '</div>';
+
+
+
+                        var input_id = '#mc_embed_signup';
+
+                        var f = $(input_id);
+
+                        if (ftypes[index] == 'address') {
+
+                            input_id = '#mce-' + fnames[index] + '-addr1';
+
+                            f = $(input_id).parent().parent().get(0);
+
+                        } else if (ftypes[index] == 'date') {
+
+                            input_id = '#mce-' + fnames[index] + '-month';
+
+                            f = $(input_id).parent().parent().get(0);
+
+                        } else {
+
+                            input_id = '#mce-' + fnames[index];
+
+                            f = $().parent(input_id).get(0);
+
+                        }
+
+                        if (f) {
+
+                            $(f).append(html);
+
+                            $(input_id).focus();
+
+                        } else {
+
+                            $('#mce-' + resp.result + '-response').show();
+
+                            $('#mce-' + resp.result + '-response').html(msg);
+
+                        }
+
+                    }
+
+                } catch (e) {
+
+                    $('#mce-' + resp.result + '-response').show();
+
+                    $('#mce-' + resp.result + '-response').html(msg);
+
+                }
+
+            }
+
+        }
+    </script>
+
+
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+
+        _gaq.push(['_setAccount', 'UA-18516675-2']);
+
+        _gaq.push(['_trackPageview']);
+
+
+
+        (function() {
+
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+
+        })();
+    </script>
+
+
+
+</head>
+
+
+
+<body>
+
+    <div id="top">
+
+        <div id="top-content">
+
+            <div class="logo">
+                <a href="index.htm"><img class="logo-header" src="images/1999_new_logo_tan.png"></a>
+            </div>
+
+            <div class="nav-wrap">
+
+
+
+                <ul class="group" id="example-one">
+
+                    <li>
+                        <a href="about-1999.htm"><img src="images/btn-about1999.png"></a>
+                    </li>
+
+                    <li>
+                        <a href="leasing.htm"><img src="images/availability.png"></a>
+                    </li>
+
+
+
+                    <li>
+                        <a href="tenants.htm"><img src="images/btn-tenants.png"></a>
+                    </li>
+
+                    <li>
+                        <a href="amenities.htm"><img src="images/btn-amenities.png"></a>
+                    </li>
+
+
+
+                    <li class="current_page_item">
+                        <a href="contact.htm"><img src="images/btn-contact.png"></a>
+                    </li>
+
+
+
+                </ul>
+
+
+
+            </div>
+
+
+
+        </div>
+        <!-- eof top-content -->
+
+    </div>
+    <!-- eof TOP -->
+
+    <div id="center">
+
+        <div id="center-content-page5">
+            <div class="page-contact"><img src="images/contact-us-top.png">
+                <p style="color:#fff; font-size:13px; padding-left:15px;"><span class="bold">1999 
+        Avenue of the Stars Century City, CA�90067</span></p>
+            </div>
+            <div class="contact-left">
+                <!-- Begin MailChimp Signup Form -->
+                <link href="http://cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
+                <div id="mc_embed_signup">
+                    <form action="http://1999aos.us4.list-manage1.com/subscribe/post?u=0749154bef2ab5bde453dd75d&amp;id=43be4f8d8f" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
+                        <div class="mc-field-group">
+                            <div class="title2">First Name </div>
+                            <input type="text" value="" name="FNAME" class="" id="mce-FNAME" style="width:258px;">
+                        </div>
+                        <div class="mc-field-group">
+                            <div class="title2">Last Name </div>
+                            <input type="text" value="" name="LNAME" class="" id="mce-LNAME" style="width:258px;">
+                        </div>
+                        <div class="mc-field-group size1of2">
+                            <div class="title2">Phone Number </div>
+                            <div class="phonefield phonefield-us"> (<span class="phonearea"> 
+              <input pattern="[0-9]*" id="mce-MMERGE3-area" name="MMERGE3[area]" maxlength="3" size="3" value="" type="text" >
+              </span>) <span class="phonedetail1"> 
+              <input pattern="[0-9]*" id="mce-MMERGE3-detail1" name="MMERGE3[detail1]" maxlength="3" size="3" value="" type="text">
+              </span> - <span class="phonedetail2"> 
+              <input pattern="[0-9]*" id="mce-MMERGE3-detail2" name="MMERGE3[detail2]" maxlength="4" size="4" value="" type="text" style="width:50px;">
+              </span> </div>
+                        </div>
+                        <div class="mc-field-group">
+                            <div class="title2">Email Address * </div>
+                            <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" style="width:258px;">
+                        </div>
+                        <div class="mc-field-group">
+                            <div class="title2">Message * </div>
+                            <input type="text" value="" name="MMERGE4" class="required" id="mce-MMERGE4" style="width:369px; height:50px;">
+                        </div>
+                        <div style="font-size:10px;">* These are required fields to submit your message.
+                        </div>
+                        <div id="mce-response" class="clear">
+                            <div class="response" id="mce-error-response" style="display:none"></div>
+                            <div class="response" id="mce-success-response" style="display:none"></div>
+                        </div>
+                        <div class="clear">
+                            <input type="image" src="images/submit-btn.png" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" style="margin-left:-0px;">
+                        </div>
+                    </form>
+                </div>
+                <!--End mc_embed_signup-->
+            </div>
+            <!-- eof page-left -->
+            <div class="contact-right">
+                <div class="contact">
+                    <div class="box">
+                        <div class="address">
+                            <div class="title2">Andrew McDonald</div>
+                            Executive Director / Market Leader<br>
+                            <a href="mailto:Andrew.McDonald@cushwake.com">Andrew.McDonald@cushwake.com</a>
+                            <div style="height:10px;"></div>
+                            P (310) 595-2219 </div>
+                    </div>
+                    <div class="box">
+                        <div class="address">
+                            <div class="title2">Scott Menkus</div>
+                            Director<br>
+                            <a href="mailto:Scott.Menkus@cushwake.com">Scott.Menkus@cushwake.com 
+            </a>
+                            <div style="height:10px;"></div>
+                            P (310) 595-2211<br>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="address">
+                            <div class="title2">Peter Collins</div>
+                            Director<br>
+                            <a href="mailto:Peter.Collins@cushwake.com">Peter.Collins@cushwake.com</a>
+                            <div style="height:10px;"></div>
+                            P (310) 595-2227 <br>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="address">
+                            <div class="title2">Michael Johnson Jr.</div>
+                            Associate<br>
+                            <a href="mailto:Michael.Johnson@cushwake.com">Michael.Johnson@cushwake.com</a>
+                            <div style="height:10px;"></div>
+                            P (310) 595-2239 <br>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="address">
+                            <div class="title2">Brenda Borja</div>
+                            Property Manager<br>
+                            <a href="http://1999aos.com/Brenda_Borja@equityoffice.com">Brenda_Borja@equityoffice.com</a>
+                            <div style="height:10px;"></div>
+                            P (310) 446-2227 </div>
+                    </div>
+                    <div class="box">
+                        <div class="address">
+                            <div class="title2">Tegue Parado</div>
+                            Property Manager<br>
+                            <a href="http://1999aos.com/Tegue_Parado@equityoffice.com">Tegue_Parado@equityoffice.com</a>
+                            <div style="height:10px;"></div>
+                            P (310) 446-2227 </div>
+                    </div>
+                </div>
+            </div>
+            <!-- eof page-right -->
+        </div>
+
+        <!-- eof center-content -->
+
+    </div>
+    <!-- eof CENTER -->
+
+    <div id="bottom">
+
+        <div id="bottom-content">
+
+            <div class="footer">
+
+
+
+                <img src="images/energy.png"></div>
+
+
+
+        </div>
+
+    </div>
+    <!-- eof bottom-content -->
+
+    </div>
+    <!-- eof BOTTOM -->
+
+</body>
+
+</html>
