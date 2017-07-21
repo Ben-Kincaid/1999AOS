@@ -136,7 +136,7 @@ body {
     width: 1002px;
     min-width: 1002px;
     position: relative;
-    height: 1245px;
+    height: 945px;
 }
 
 #center-content-page3 {
@@ -910,6 +910,76 @@ body {
 
 .logo-header {
     width: 75px;
-    margin-left: 60px;
+    margin-left: 0px;
     box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 9;
+}
+
+#map-container {
+    position: relative;
+    z-index: 1;
+}
+
+.jmb {
+    width: 100px;
+    padding: 0;
+    margin: 0;
+}
+
+.equity {
+    padding-top: 10px;
+}
+
+.energy {
+    padding-top: 10px;
+}
+
+.amenities-content {
+    width: 100%;
+    height: 100px;
+    position: relative;
+}
+
+.amenities-header {
+    font-family: 'Century Gothic';
+    font-size: 30px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: underline;
+    color: #2c4b9c;
+}
+
+.rest-col {}
+
+[class*="col-"] {
+    display: relative;
+    font-size: 15px;
+    float: left;
+    display: inline-block;
+    padding: 10px 20px;
+}
+
+[class*="col-"] ul {
+    list-style-type: none;
+}
+
+[class*="col-"] h5 {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #3659b4;
+}
+
+[class*="col-"] ul li {
+    color: #464646;
+    font-weight: 300;
+}
+
+[class*="col-"] ul li span {
+    color: black;
+    font-weight: 700;
+}
+
+.amenities-bg {
+    width: 100%;
 }
